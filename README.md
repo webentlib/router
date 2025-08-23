@@ -80,6 +80,14 @@ export { patterns, error}
 Check `/router/types.ts:Pattern` type to get more.
 — Details will be added here later.  # TODO
 
+5. Optionally, add this to your `all.js`:
+
+```
+// ROUTER
+export { routeStore, titleStore, h1Store } from '/router/router.ts';
+export { Layouts, Wrappers } from '/urls.ts';
+```
+
 # Usage
 
 ```js
@@ -122,4 +130,65 @@ Yes, one can define `load` function just in `.svelte` page in `<script module>` 
         <div>{article.text}</div>
     </div>
 {/each}
+```
+
+# Example of your base layout (commonly `page.svelte`)
+
+```
+<script>
+    /* bunch of css imports */
+
+    import { routeStore, titleStore, h1Store, Layouts, Wrappers, beforeNavigate, afterNavigate } from '/all.js';
+    import Header from '/src/Header.svelte';
+
+    const { children } = $props();
+
+    // title & h1
+    let title = $derived($titleStore || $routeStore.title);
+    let h1    = $derived($h1Store || $routeStore.h1);
+    beforeNavigate(() => {
+        $titleStore = title;
+        $h1Store = h1;
+    });
+    afterNavigate(() => {
+        $titleStore = null;
+        $h1Store = null;
+    });
+
+    // pathname & layout & wrapper
+    let pathname = $state($routeStore.url.pathname);
+    let layout   = $state($routeStore.layout);
+    let wrapper  = $state($routeStore.wrapper);
+    afterNavigate(() => {
+        pathname = $routeStore.url.pathname
+        layout   = $routeStore.layout
+        wrapper  = $routeStore.wrapper
+    })
+</script>
+
+<svelte:head>
+    <title>{title ? title + ' | White Hat' : 'White Hat'}</title>
+</svelte:head>
+
+<Header/>
+
+{#key pathname}
+    {#if layout === Layouts.DEFAULT}
+        <main
+            class='Wrapper'
+            class:_Default={wrapper === Wrappers.DEFAULT}
+            class:_Narrow={wrapper === Wrappers.NARROW}
+            class:_Wide={wrapper === Wrappers.WIDE}
+        >
+            {#if h1}
+                <div class="Heading">
+                    <h1 class="Title">{h1}</h1>
+                </div>
+            {/if}
+            {@render children?.()}
+        </main>
+    {:else if layout === Layouts.CUSTOM || !layout}
+        {@render children?.()}
+    {/if}
+{/key}
 ```
