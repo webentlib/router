@@ -93,7 +93,7 @@ Check `/router/types.ts:Route` type to get more.
 
 # `load` function in `<script module>`
 
-Yes, one can define `load` function just in `.svelte` page in `<script module>` like in good old Sapper.
+Yes, one can define `load` function just in `.svelte` page in `<script module>` like in a good old Sapper.
 
 ```html
 <script module>
