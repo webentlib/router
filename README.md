@@ -1,6 +1,6 @@
 # Installation
 
-1. Pull this repo to the root folder (same lvl as `package.json`) folder to get `router/` folder.
+1. Pull this repo to the root folder (same lvl as `package.json`) to get `router/` folder.
 2. `svelte.config.js`:
 
 Add `routes: 'router/'` to `config.kit.files`:
@@ -58,7 +58,7 @@ config.server.fs.allow.push('..');
 export default config;
 ```
 
-4. Create `urls.ts` in foot folder (same lvl as `package.json`)
+4. Create `urls.ts` in foot folder (same lvl as `package.json`).
 
 ```js
 import { Sides } from '/router/enums.ts';
