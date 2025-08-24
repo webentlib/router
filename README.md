@@ -146,10 +146,6 @@ Yes, one can define `load` function just in `.svelte` page in `<script module>` 
     // title & h1
     let title = $derived($titleStore || $routeStore.title);
     let h1    = $derived($h1Store || $routeStore.h1);
-    beforeNavigate(() => {
-        $titleStore = title;
-        $h1Store = h1;
-    });
     afterNavigate(() => {
         $titleStore = null;
         $h1Store = null;
