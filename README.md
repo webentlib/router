@@ -143,14 +143,17 @@ Yes, one can define `load` function just in `.svelte` page in `<script module>` 
 
     const { children } = $props();
 
-    // title & h1
-    let title = $derived($titleStore || $routeStore.title);
-    let h1    = $derived($h1Store || $routeStore.h1);
-
-    // pathname & layout & wrapper
-    let pathname = $state($routeStore.url.pathname);
-    let layout   = $state($routeStore.layout);
-    let wrapper  = $state($routeStore.wrapper);
+    // ROUTER
+    import { routeStore, titleStore, h1Store, Layouts, Wrappers, beforeNavigate } from '/all.js';
+    let title   = $derived($titleStore || $routeStore.title);
+    let h1      = $derived($h1Store || $routeStore.h1);
+    let path    = $derived($routeStore.url.pathname + $routeStore.url.search);
+    let layout  = $derived($routeStore.layout);
+    let wrapper = $derived($routeStore.wrapper);
+    beforeNavigate(() => {
+        $titleStore = null;
+        $h1Store = null;
+    });
 </script>
 
 <svelte:head>
@@ -159,7 +162,7 @@ Yes, one can define `load` function just in `.svelte` page in `<script module>` 
 
 <Header/>
 
-{#key pathname}
+{#key path}
     {#if layout === Layouts.DEFAULT}
         <main
             class='Wrapper'
