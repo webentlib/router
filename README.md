@@ -23,7 +23,7 @@ const config = {
 
 ### 3. `vite.config.js`:
    
-Ensure `allow: ['..']` in `vite.config.ts`, if not _
+Ensure `allow: ['..']` in `vite.config.ts`, if not —  
 Add `allow: ['..']` to `server.fs`:
 
 ```js
