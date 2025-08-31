@@ -79,7 +79,7 @@ There are 4 params, that are common for both 'layout' and 'pattern' declaration:
 - `page`
 - `js`
 - `side`
-- `options`
+- `options`  
 Let's talk about it.
 
 So now we have only:
