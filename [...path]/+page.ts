@@ -20,7 +20,7 @@ export async function load(params) {
         eval(`${k} = ${v}`);
     }
 
-    params.data = await Router.call_loads(params, pattern, Sides.UNIVERSAL);
+    params.data = await Router.call_loads(params, pattern, route, Sides.UNIVERSAL);
 
     return params.data;
 }

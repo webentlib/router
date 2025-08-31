@@ -1,11 +1,10 @@
-import { writable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 import type { Writable } from 'svelte/store';
 import { error as svelteError } from '@sveltejs/kit';
 import { browser } from '$app/environment';
 import { patterns, error } from '/urls.ts';
 import { Sides } from './enums.ts';
 import type { Route } from './types.ts';
-
 
 export const routeStore: Writable<Route> = writable();
 export const titleStore = writable();
@@ -46,6 +45,7 @@ Router.get_route = async function(pattern, params) {
     route.error = await Router.get_error(pattern)
     route.layouts = await Router.get_layouts(params, pattern)
 
+    route.js = pattern.js;
     route.side = pattern.side;
     route.options = pattern.options;
 
@@ -58,7 +58,7 @@ Router.get_route = async function(pattern, params) {
     return route;
 }
 
-Router.call_loads = async function(params, current_pattern, current_side) {
+Router.call_loads = async function(params, current_pattern, route, current_side) {
     for (const pattern of [...(current_pattern.layouts || []), current_pattern]) {
         let execute;
         if (!pattern.side) {
@@ -79,7 +79,7 @@ Router.call_loads = async function(params, current_pattern, current_side) {
         const load = module.load;
 
         if (load) {
-            params.data = {...params.data, ...await load(params)};
+            params.data = {...params.data, ...await load({...params, slugs: route.slugs || []})};
         }
     }
     return params.data;
@@ -112,14 +112,10 @@ Router.get_error = async function(pattern) {
     if (!pattern) {
         error_to_return = error
     }
-    for (const page of [...(pattern.layouts || []), pattern].reverse()) {
-        if (!page.error) continue;
+    for (const page of [...(pattern?.layouts || []), pattern].reverse()) {
+        if (!page?.error) continue;
         error_to_return = page.error
         break
-    }
-    if (!error_to_return) {
-        const router_error = () => import('/router/_error.svelte');
-        error_to_return = router_error;
     }
     return (await error_to_return()).default;
 }

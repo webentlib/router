@@ -21,7 +21,7 @@ export async function load(params) {
         eval(`${k} = ${v}`);
     }
 
-    params.data = await Router.call_loads(params, pattern, Sides.SERVER);
+    params.data = await Router.call_loads(params, pattern, route, Sides.SERVER);
 
     return params.data;
 }

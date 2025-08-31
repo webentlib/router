@@ -13,7 +13,7 @@ export interface Layout {
 }
 
 interface PatternAndRoute extends Layout {
-    layout?: string,      // E.g: 'CUSTOM', 'CUSTOM'
+    layout?: string,      // E.g: base.svelte
     wrapper?: string,     // Can be used for css class for <main>
     title?: string,       // Can be used for <title>
     h1?: string,          // Can be used for <h1>
