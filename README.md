@@ -27,7 +27,7 @@ const config = {
 Ensure `allow: ['..']` in `vite.config.ts`, if not —  
 Add `allow: ['..']` to `server.fs`:
 
-```js
+```ts
 export default defineConfig({
 	...
     server: {
@@ -103,7 +103,7 @@ So now we have only:
 ```ts
 import { Sides } from '/router/';  // or from '/' in case you use root index.ts
 ```
-```
+```ts
 {re: '', page: () => import('/src/home.svelte'), page: () => import('/src/home.js'), side: Sides.SERVER, layouts}
 ```
 
@@ -149,7 +149,7 @@ export async function load({ url, params, data, fetch, setHeaders, depends, pare
 }
 ```
 Or using `routeStore`:
-```js
+```ts
 import {get} from 'svelte/store';
 import { routeStore } from '/router/';
 export async function load({ url, params, data, fetch, setHeaders, depends, parent, untrack, slugs }) {
