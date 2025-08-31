@@ -112,7 +112,7 @@ So now we have only:
 import { Sides } from '/router/';  // or from '/' in case you use root index.ts
 ```
 ```ts
-{re: '', page: () => import('/src/home.svelte'), page: () => import('/src/home.js'), side: Sides.SERVER, layouts}
+{re: '', page: () => import('/src/home.svelte'), js: () => import('/src/home.js'), side: Sides.SERVER, layouts}
 ```
 
 There are 'SERVER', 'CLIENT' and 'UNIVERSAL'.
