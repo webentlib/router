@@ -65,7 +65,7 @@ export const patterns: Pattern[] = [
 ]
 ```
 
-Router expects only `patterns` to be exported.
+> Router expects only `patterns` to be exported.
 
 ### 6. `error`, `layout` and first route in `pattern`
 
