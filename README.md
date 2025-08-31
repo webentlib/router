@@ -54,7 +54,7 @@ export type { Pattern, Layout, Error } from '/router/';
 Create `urls.ts` in the root folder (same level as `package.json`)
 
 ```ts
-import type { Pattern, Error } from '/router/types';  // or from '/' in case you use root index.ts
+import type { Pattern, Layout, Error } from '/router/types';  // or from '/all.js' in case you use root index.ts
 
 export const error: Error = () => import('/src/error.svelte');
 const layout: Layout = { page: () => import('/src/base.svelte'), error };
@@ -109,10 +109,10 @@ So now we have only:
 ### 3. To specify side to execute `load`, add `side` param to pattern:
 
 ```ts
-import { Sides } from '/router/';  // or from '/' in case you use root index.ts
+import { Sides } from '/router/';  // or from '/all.js' in case you use root index.ts
 ```
 ```ts
-{re: '', page: () => import('/src/home.svelte'), js: () => import('/src/home.js'), side: Sides.SERVER, layouts}
+{re: '', page: () => import('/src/home.svelte'), page: () => import('/src/home.js'), side: Sides.SERVER, layouts}
 ```
 
 There are 'SERVER', 'CLIENT' and 'UNIVERSAL'.
@@ -249,7 +249,7 @@ export const patterns: Pattern[] = [
 ```html
 <script>
     // ROUTER
-    import { routeStore, titleStore, h1Store, Layouts, Wrappers, Extras, beforeNavigate } from '/';
+    import { routeStore, titleStore, h1Store, Layouts, Wrappers, Extras, beforeNavigate } from '/all.js';
     let title   = $derived($titleStore || $routeStore.title);
     let h1      = $derived($h1Store || $routeStore.h1);
     let path    = $derived($routeStore.url.pathname + $routeStore.url.search);
@@ -262,7 +262,7 @@ export const patterns: Pattern[] = [
     });
 
     // CUSTOM
-    import { GoTop } from '/';
+    import { GoTop } from '/all.js';
     import Header from '/src/Header.svelte';
 
     let { children } = $props();
