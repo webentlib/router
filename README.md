@@ -57,7 +57,7 @@ import type { Pattern, Error } from '/router/types';  // or from '/' in case you
 
 const error: Error = () => import('/src/error.svelte');
 const layout: Layout = { page: () => import('/src/base.svelte'), error };
-const layouts: Layout[] = [layout];
+const layouts: Layout[] = [layout];  // for nested layouts — [layout, sublayout, ...]
 
 export const patterns: Pattern[] = [
     {re: '', page: () => import('/src/home.svelte'), layouts},
@@ -73,49 +73,144 @@ Router expects only `patterns` to be exported.
 
 # Diving deep into `Pattern`.
 
-### 1. ... 
-
-# Usage
-
-```js
-import { routeStore } from '/router/';
-
-$routeStore
+So now we have only:
+```ts
+{re: '', page: () => import('/src/home.svelte'), layouts}
 ```
 
-Check `/router/types.ts:Route` type to get more.
-— Details will be added here later.  # TODO
+### 1. And, even now we can export `load` function in `home.svelte`s' `<script module>`, just like it was in the good old Sapper.
 
-# `load` function in `<script module>`
-
-Yes, one can define `load` function just in `.svelte` page in `<script module>` like in good old Sapper.
-
+#### `home.svelte`
 ```html
 <script module>
-    import {get} from 'svelte/store';
-    import {routeStore, titleStore, h1Store} from '/router/';
-
-    export async function load({ url, params, data, fetch, setHeaders, depends, parent, untrack}) {
-        const article_id = get(routeStore).slugs.id;
-        const response = await fetch(`/api/articles/${article_id}/`);
-        const article = await response.json();
-        return {article}
+    export async function load({ url, params, data, fetch, setHeaders, depends, parent, untrack }) {
+        const response = await fetch(`/api/articles/`);
+        const articles = await response.json();
+        return {articles}
     }
 </script>
-
-<script>
-    const { data } = $props();
-    
-    let articles = $derived.by(() => {
-        let articles = $state(data.articles);
-        return articles;
-    }) 
-</script>
-
-{#each article in articles}
-    <div>
-        <h1>{article.title}</h1>
-        <div>{article.text}</div>
-    </div>
-{/each}
 ```
+
+### 2. Sure, we could also describe `load` function in separate file, and specify its' path like this:
+```
+{re: '', page: () => import('/src/home.svelte'), js: () => import('/src/home.js'), layouts}
+```
+
+### 3. To specify side to execute `load`, add `side` param to pattern:
+
+```ts
+import { Sides } from '/router/';  // or from '/' in case you use root index.ts
+```
+```
+{re: '', page: () => import('/src/home.svelte'), page: () => import('/src/home.js'), side: Sides.SERVER, layouts}
+```
+
+There are 'SERVER', 'CLIENT' and 'UNIVERSAL'
+
+It could be passed via enum:
+```ts
+export enum Sides {
+    SERVER = 'SERVER',
+    CLIENT = 'CLIENT',
+    UNIVERSAL = 'UNIVERSAL',
+}
+```
+Or just as string, like `side: 'UNIVERSAL'`.
+Enum is recommended.
+
+### 4. Also there are `options` param:
+
+https://svelte.dev/docs/kit/page-options
+
+---
+
+> `page`, `js`, `side` and `options` are common for both 'page' and 'layout' declaration.
+
+# Matching slugs
+
+1. Sure we want match complex urls and access slugs as params, like:
+```ts
+{re: 'articles/(<id>[0-9]+)', page: () => import('/src/articles/article.svelte'), layouts},
+```
+
+Here we declare group `(<id>[0-9]+)`, where `id` is the named param, which is available in:
+- `load` function as in incoming param `slugs` objects.
+- `import { routeStore } from '/router/';` as `$routeStore.slugs`.
+
+So `load` function using `slugs` could look like that:
+```ts
+export async function load({ url, params, data, fetch, setHeaders, depends, parent, untrack, slugs }) {
+    const response = await fetch(`/api/articles/${slugs.id}/`);
+    const article = await response.json();
+    return {article}
+}
+```
+Or using `routeStore`:
+```js
+import {get} from 'svelte/store';
+import { routeStore } from '/router/';
+export async function load({ url, params, data, fetch, setHeaders, depends, parent, untrack, slugs }) {
+    const response = await fetch(`/api/articles/${get(routeStore).slugs}/`);
+    const article = await response.json();
+    return {article}
+}
+```
+
+# Advanced usage
+
+TODO
+
+
+[comment]: <> (# `load` function in `<script module>`)
+
+[comment]: <> (Yes, one can define `load` function just in `.svelte` page in `<script module>` like in good old Sapper.)
+
+[comment]: <> (```html)
+
+[comment]: <> (<script module>)
+
+[comment]: <> (    import {get} from 'svelte/store';)
+
+[comment]: <> (    import {routeStore, titleStore, h1Store} from '/router/';)
+
+[comment]: <> (    export async function load&#40;{ url, params, data, fetch, setHeaders, depends, parent, untrack}&#41; {)
+
+[comment]: <> (        const article_id = get&#40;routeStore&#41;.slugs.id;)
+
+[comment]: <> (        const response = await fetch&#40;`/api/articles/${article_id}/`&#41;;)
+
+[comment]: <> (        const article = await response.json&#40;&#41;;)
+
+[comment]: <> (        return {article})
+
+[comment]: <> (    })
+
+[comment]: <> (</script>)
+
+[comment]: <> (<script>)
+
+[comment]: <> (    const { data } = $props&#40;&#41;;)
+    
+[comment]: <> (    let articles = $derived.by&#40;&#40;&#41; => {)
+
+[comment]: <> (        let articles = $state&#40;data.articles&#41;;)
+
+[comment]: <> (        return articles;)
+
+[comment]: <> (    }&#41; )
+
+[comment]: <> (</script>)
+
+[comment]: <> ({#each article in articles})
+
+[comment]: <> (    <div>)
+
+[comment]: <> (        <h1>{article.title}</h1>)
+
+[comment]: <> (        <div>{article.text}</div>)
+
+[comment]: <> (    </div>)
+
+[comment]: <> ({/each})
+
+[comment]: <> (```)
