@@ -1,7 +1,7 @@
 # Installation
 
-## 1. Pull this repo to the root folder (same level as `package.json`) folder to get `router/` folder.
-## 2. `svelte.config.js`:
+### 1. Pull this repo to the root folder (same level as `package.json`) folder to get `router/` folder.
+### 2. `svelte.config.js`:
 
 Add `routes: 'router/'` to `config.kit.files`:
 
@@ -18,7 +18,7 @@ const config = {
 }
 ```
 
-## 3. `vite.config.js`:
+### 3. `vite.config.js`:
    
 Ensure `allow: ['..']` in `vite.config.ts`, if not _
 Add `allow: ['..']` to `server.fs`:
@@ -34,7 +34,7 @@ export default defineConfig({
 }
 ```
 
-## 4. `index.ts`
+### 4. `index.ts`
 
 Optionally, re-export Routers' vars via your root's `index.ts`.
 At the very top of `index.ts` add:
@@ -45,7 +45,7 @@ export { routeStore, titleStore, h1Store, Sides } from '/router/';
 export type { Pattern, Layout, Error } from '/router/';
 ```
 
-## 5. `urls.ts`
+### 5. `urls.ts`
    
 Create `urls.ts` in the root folder (same level as `package.json`)
 
@@ -63,13 +63,13 @@ export const patterns: Pattern[] = [
 
 Router expects only `patterns` to be exported.
 
-## 6. `error`, `layout` and first route in `pattern`
+### 6. `error`, `layout` and first route in `pattern`
 
 Create `.svelte` pages for 'error', 'base layout' and 'home'; call them as you want, and specify paths to them in `error`, `layout` and first route in `patterns`.
 
 # Diving deep into `Pattern`.
 
-## 1. ... 
+### 1. ... 
 
 # Usage
 
