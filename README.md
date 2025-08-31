@@ -1,6 +1,6 @@
 # Installation
 
-### 1. `git pull` this repo to the root folder (same level as `package.json`) folder to get `router/` folder.
+### 1. `git pull` this repo to the root folder (same level as `package.json`) to get `router/` folder.
 ### 2. `svelte.config.js`:
 
 Add `routes: 'router/'` to `config.kit.files`:
