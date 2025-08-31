@@ -39,7 +39,7 @@ export default defineConfig({
 
 ### 4. `index.ts`
 
-Optionally, re-export Routers' vars via your root's `index.ts`.
+Optionally, re-export Routers' vars via your root's `index.ts`.  
 At the very top of `index.ts` add:
 
 ```ts
@@ -68,7 +68,9 @@ Router expects only `patterns` to be exported.
 
 ### 6. `error`, `layout` and first route in `pattern`
 
-Create `.svelte` pages for 'error', 'base layout' and 'home'; call them as you want, and specify paths to them in `error`, `layout` and first route in `patterns`.
+- Create `.svelte` pages for 'error', 'base layout' and 'home'
+- Call them as you want
+- And specify paths to them in `error`, `layout` and first route in `patterns`.
 
 # Diving deep into `Pattern`.
 
