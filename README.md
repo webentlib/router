@@ -82,7 +82,7 @@ So now we have only:
 
 ### 1. And, even now we can export `load` function in `home.svelte`s' `<script module>`, just like it was in the good old Sapper.
 
-#### `home.svelte`
+`home.svelte`
 ```html
 <script module>
     export async function load({ url, params, data, fetch, setHeaders, depends, parent, untrack }) {
