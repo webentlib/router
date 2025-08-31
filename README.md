@@ -2,7 +2,7 @@
 
 ### 1. `git clone https://github.com/webentlib/router.git`
 
-In your root folder (same level as `package.json`) to get `router/` folder.
+To your root folder (same level as `package.json`) to get `router/` folder.
 
 ### 2. `svelte.config.js`:
 
