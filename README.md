@@ -1,4 +1,5 @@
-# Installation
+I. Installation
+===============
 
 ### 1. `git clone https://github.com/webentlib/router.git`
 
@@ -71,7 +72,8 @@ Router expects only `patterns` to be exported.
 - Create `.svelte` pages for 'error', 'base layout' and 'home', call them as you want
 - And specify paths to them in `error`, `layout` and first route in `patterns`.
 
-# Diving deep into `Pattern`.
+II. Diving deep into `Pattern`
+=============================
 
 So now we have only:
 ```ts
@@ -126,7 +128,8 @@ https://svelte.dev/docs/kit/page-options
 
 > `page`, `js`, `side` and `options` are common for both 'page' and 'layout' declaration.
 
-# Matching slugs
+III. Matching slugs
+===================
 
 1. Sure we want match complex urls and access slugs as params, like:
 ```ts
@@ -156,7 +159,8 @@ export async function load({ url, params, data, fetch, setHeaders, depends, pare
 }
 ```
 
-# Advanced usage
+Advanced usage
+==============
 
 TODO
 
