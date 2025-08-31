@@ -56,7 +56,7 @@ Create `urls.ts` in the root folder (same level as `package.json`)
 ```ts
 import type { Pattern, Error } from '/router/types';  // or from '/' in case you use root index.ts
 
-const error: Error = () => import('/src/error.svelte');
+export const error: Error = () => import('/src/error.svelte');
 const layout: Layout = { page: () => import('/src/base.svelte'), error };
 const layouts: Layout[] = [layout];  // for nested layouts — [layout, sublayout, ...]
 
@@ -65,7 +65,7 @@ export const patterns: Pattern[] = [
 ]
 ```
 
-> Router expects only `patterns` to be exported.
+> Router expects `error` and `patterns` to be exported.
 
 ### 6. `error`, `layout` and first route in `pattern`
 
@@ -77,6 +77,7 @@ II. Diving deep into `Layout` and `Pattern`
 
 There are 4 params, that are common for both 'layout' and 'pattern' declaration:
 - `page`
+- `error`
 - `js`
 - `side`
 - `options`  
@@ -114,7 +115,7 @@ import { Sides } from '/router/';  // or from '/' in case you use root index.ts
 {re: '', page: () => import('/src/home.svelte'), page: () => import('/src/home.js'), side: Sides.SERVER, layouts}
 ```
 
-There are 'SERVER', 'CLIENT' and 'UNIVERSAL'
+There are 'SERVER', 'CLIENT' and 'UNIVERSAL'.
 
 It could be passed via enum:
 ```ts
@@ -165,4 +166,145 @@ export async function load({ url, params, data, fetch, setHeaders, depends, pare
 Advanced usage
 ==============
 
-TODO
+If you inspect `import type { Pattern } from '/router/types';` you'll see that there are much more options to pass to `Pattern`.
+
+There are also:
+```ts
+layout?: string,      // E.g: 'CUSTOM', 'CUSTOM'
+wrapper?: string,     // Can be used for css class for <main>
+title?: string,       // Can be used for <title>
+h1?: string,          // Can be used for <h1>
+name?: string,        // 'id' of a route
+extras?: string[],    // Any additions to use in layout
+```
+
+That's just variables, that could be defined in one place and used in base layout somehow.
+They convert to properties of `routeStore`, and it's totally up to you how to use them, but here are an examples of a layout and page on steroids:
+
+`urls.ts`:
+```ts
+import { Sides } from '/router/enums.ts';
+import type { Pattern, Layout, Error } from '/router/types.ts';
+
+// ENUMS
+export enum Layouts {
+    DEFAULT = 'DEFAULT',
+    CUSTOM = 'CUSTOM',
+    BLANK = 'BLANK',
+}
+
+export enum Wrappers {
+    WIDE = 'WIDE',
+    DEFAULT = 'DEFAULT',
+    NARROW = 'NARROW',
+}
+
+export enum Extras {
+    GO_TOP = 'GO_TOP',
+}
+
+// ERRORS
+export const error: Error = () => import('/src/error.svelte');
+
+// DEFAULTS
+const layout: Layout = {page: () => import('/src/base.svelte'), error: error}
+const layouts: Layout[] = [layout];
+
+// SPECIFIC
+const task_layout: Layout = {page: () => import('/src/tasks/task.svelte'), error: error}
+const task_layouts: Layout[] = [layout, task_layout];
+
+export const patterns: Pattern[] = [
+    {
+        re: '',
+        page: () => import('/src/tasks/tasks.svelte'),
+        layouts: layouts,
+        layout: Layouts.DEFAULT,
+        extras: [Extras.GO_TOP],
+        wrapper: Wrappers.DEFAULT
+    },
+    {
+        re: 'articles',
+        page: () => import('/src/tasks/task_form.svelte'),
+        layouts: layouts,      
+        layout: Layouts.DEFAULT, 
+        extras: [],              
+        wrapper: Wrappers.DEFAULT,
+        title: 'Articles', 
+        h1: 'Recent Articles',
+        name: 'ARTICLES',
+    },
+    {
+        re: 'article/(<id>[0-9]+)',
+        page: () => import('/src/tasks/results.svelte'),
+        layouts: task_layouts,
+        layout: Layouts.CUSTOM,
+        extras: [Extras.GO_TOP],
+        wrapper: Wrappers.WIDE
+    },
+]
+```
+
+`base.svelte`:
+```html
+<script>
+    // ROUTER
+    import { routeStore, titleStore, h1Store, Layouts, Wrappers, Extras, beforeNavigate } from '/';
+    let title   = $derived($titleStore || $routeStore.title);
+    let h1      = $derived($h1Store || $routeStore.h1);
+    let path    = $derived($routeStore.url.pathname + $routeStore.url.search);
+    let layout  = $derived($routeStore.layout);
+    let wrapper = $derived($routeStore.wrapper);
+    let extras    = $derived($routeStore.extras);
+    beforeNavigate(() => {
+        $titleStore = null;
+        $h1Store = null;
+    });
+
+    // CUSTOM
+    import { GoTop } from '/';
+    import Header from '/src/Header.svelte';
+
+    let { children } = $props();
+</script>
+
+<svelte:head>
+    <title>{title ? title + ' | My Project' : 'My Project'}</title>
+</svelte:head>
+
+{#if layout !== Layouts.BLANK}
+    <Header/>
+{/if}
+
+{#key path}
+    {#if layout === Layouts.DEFAULT}
+        <main
+            class='Wrapper'
+            class:_Wide={wrapper === Wrappers.WIDE}
+            class:_Default={wrapper === Wrappers.DEFAULT}
+            class:_Narrow={wrapper === Wrappers.NARROW}
+        >
+            {#if h1}
+                <div class="Heading">
+                    <h1 class="Title">{h1}</h1>
+                </div>
+            {/if}
+            {@render children?.()}
+        </main>
+    {:else}
+        {@render children?.()}
+    {/if}
+{/key}
+
+{#if extras?.length || extras.includes(Extras.GO_TOP)}
+    <GoTop/>
+{/if}
+```
+
+`article.svelte`:
+
+```ts
+$effect(() => {
+    $titleStore = article.name    
+})
+```
