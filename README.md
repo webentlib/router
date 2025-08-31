@@ -77,7 +77,7 @@ II. Diving deep into `Pattern`
 
 So now we have only:
 ```ts
-{re: '', page: () => import('/src/home.svelte'), layouts}
+{re: '', page: () => import('/src/home.svelte'), layouts},
 ```
 
 ### 1. And, even now we can export `load` function in `home.svelte`s' `<script module>`, just like it was in the good old Sapper.
@@ -94,8 +94,8 @@ So now we have only:
 ```
 
 ### 2. Sure, we could also describe `load` function in separate file, and specify its' path like this:
-```
-{re: '', page: () => import('/src/home.svelte'), js: () => import('/src/home.js'), layouts}
+```ts
+{re: '', page: () => import('/src/home.svelte'), js: () => import('/src/home.js'), layouts},
 ```
 
 ### 3. To specify side to execute `load`, add `side` param to pattern:
