@@ -1,11 +1,11 @@
 # Installation
 
-1. Pull this repo to the root folder (same lvl as `package.json`) to get `router/` folder.
-2. `svelte.config.js`:
+### 1. Pull this repo to the root folder (same level as `package.json`) folder to get `router/` folder.
+### 2. `svelte.config.js`:
 
 Add `routes: 'router/'` to `config.kit.files`:
 
-```js
+```ts
 const config = {
     ...
     kit: {
@@ -18,15 +18,9 @@ const config = {
 }
 ```
 
-Or paste this between `const config = {...}` declaration and `export default config;`:
-
-```js
-// Router
-config.kit.files.routes = 'router/'
-```
-
-3. Ensure `allow: ['..']` in `vite.config.ts`
+### 3. `vite.config.js`:
    
+Ensure `allow: ['..']` in `vite.config.ts`, if not _
 Add `allow: ['..']` to `server.fs`:
 
 ```js
@@ -40,58 +34,47 @@ export default defineConfig({
 }
 ```
 
-Or define 'config' like this:
+### 4. `index.ts`
 
-```js
-const config = defineConfig({
-	...
-    server: {
-        fs: {
-            allow: [],
-        },
-    },
-}
+Optionally, re-export Routers' vars via your root's `index.ts`.
+At the very top of `index.ts` add:
 
-// Allow seeking root
-config.server.fs.allow.push('..');
-
-export default config;
+```ts
+// ROUTER
+export { routeStore, titleStore, h1Store, Sides } from '/router/';
+export type { Pattern, Layout, Error } from '/router/';
 ```
 
-4. Create `urls.ts` in foot folder (same lvl as `package.json`).
+### 5. `urls.ts`
+   
+Create `urls.ts` in the root folder (same level as `package.json`)
 
-```js
-import { Sides } from '/router/enums.ts';
-import type { Pattern, Error } from '/router/types.ts';
+```ts
+import type { Pattern, Error } from '/router/types';  // or from '/' in case you use root index.ts
 
 const error: Error = () => import('/src/error.svelte');
-const layout: Layout = {page: () => import('/src/base.svelte'), error: error};
-const layouts = [layout];
+const layout: Layout = { page: () => import('/src/base.svelte'), error };
+const layouts: Layout[] = [layout];
 
-const patterns: Pattern[] = [
-    {re: '',                      page: () => import('/src/home.svelte'), layouts},
-    {re: 'articles',              page: () => import('/src/articles/articles.svelte'), layouts},
-    {re: 'articles/(<id>[0-9]+)', page: () => import('/src/articles/article.svelte'), layouts},
+export const patterns: Pattern[] = [
+    {re: '', page: () => import('/src/home.svelte'), layouts},
 ]
-
-export { patterns, error}
 ```
 
-Check `/router/types.ts:Pattern` type to get more.
-— Details will be added here later.  # TODO
+Router expects only `patterns` to be exported.
 
-5. Optionally, add this to your `all.js`:
+### 6. `error`, `layout` and first route in `pattern`
 
-```
-// ROUTER
-export { routeStore, titleStore, h1Store } from '/router/router.ts';
-export { Layouts, Wrappers } from '/urls.ts';
-```
+Create `.svelte` pages for 'error', 'base layout' and 'home'; call them as you want, and specify paths to them in `error`, `layout` and first route in `patterns`.
+
+# Diving deep into `Pattern`.
+
+### 1. ... 
 
 # Usage
 
 ```js
-import { routeStore } from '/router/router.ts';
+import { routeStore } from '/router/';
 
 $routeStore
 ```
@@ -101,11 +84,12 @@ Check `/router/types.ts:Route` type to get more.
 
 # `load` function in `<script module>`
 
-Yes, one can define `load` function just in `.svelte` page in `<script module>` like in a good old Sapper.
+Yes, one can define `load` function just in `.svelte` page in `<script module>` like in good old Sapper.
 
 ```html
 <script module>
-    import {get, routeStore} from '/all.js';
+    import {get} from 'svelte/store';
+    import {routeStore, titleStore, h1Store} from '/router/';
 
     export async function load({ url, params, data, fetch, setHeaders, depends, parent, untrack}) {
         const article_id = get(routeStore).slugs.id;
@@ -130,55 +114,4 @@ Yes, one can define `load` function just in `.svelte` page in `<script module>` 
         <div>{article.text}</div>
     </div>
 {/each}
-```
-
-# Example of your base layout (commonly `page.svelte`)
-
-```
-<script>
-    /* ... bunch of css imports ... */
-
-    import { routeStore, titleStore, h1Store, Layouts, Wrappers, beforeNavigate } from '/all.js';
-    import Header from '/src/Header.svelte';
-
-    const { children } = $props();
-
-    // ROUTER
-    import { routeStore, titleStore, h1Store, Layouts, Wrappers, beforeNavigate } from '/all.js';
-    let title   = $derived($titleStore || $routeStore.title);
-    let h1      = $derived($h1Store || $routeStore.h1);
-    let path    = $derived($routeStore.url.pathname + $routeStore.url.search);
-    let layout  = $derived($routeStore.layout);
-    let wrapper = $derived($routeStore.wrapper);
-    beforeNavigate(() => {
-        $titleStore = null;
-        $h1Store = null;
-    });
-</script>
-
-<svelte:head>
-    <title>{title ? title + ' | My Project' : 'My Project'}</title>
-</svelte:head>
-
-<Header/>
-
-{#key path}
-    {#if layout === Layouts.DEFAULT}
-        <main
-            class='Wrapper'
-            class:_Default={wrapper === Wrappers.DEFAULT}
-            class:_Narrow={wrapper === Wrappers.NARROW}
-            class:_Wide={wrapper === Wrappers.WIDE}
-        >
-            {#if h1}
-                <div class="Heading">
-                    <h1 class="Title">{h1}</h1>
-                </div>
-            {/if}
-            {@render children?.()}
-        </main>
-    {:else if layout === Layouts.CUSTOM || !layout}
-        {@render children?.()}
-    {/if}
-{/key}
 ```

@@ -17,6 +17,7 @@ interface PatternAndRoute {
     title?: string,       // can be used for <title>
     h1?: string,          // can be used for <h1>
     name?: string,        // 'id' of a route
+    extras?: string[],      // any additions in string to use in layout
 }
 
 export interface Pattern extends PatternAndRoute {

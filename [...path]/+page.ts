@@ -9,6 +9,7 @@ export let csr = true;
 export let trailingSlash = 'never';
 export let config = {};  // not sure
 
+
 export async function load(params) {
 
     const pattern: Pattern = Router.get_pattern(params.url.pathname);

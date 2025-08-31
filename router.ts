@@ -54,18 +54,19 @@ Router.get_route = async function(pattern, params) {
     route.title = pattern.title;
     route.h1 = pattern.h1;
     route.name = pattern.name;
+    route.extras = pattern.extras;
     return route;
 }
 
 Router.call_loads = async function(params, current_pattern, current_side) {
-    for (const pattern of [current_pattern, ...(current_pattern.layouts || [])]) {
+    for (const pattern of [...(current_pattern.layouts || []), current_pattern]) {
         let execute;
         if (!pattern.side) {
             pattern.side = Sides.UNIVERSAL;
         }
         if (current_side === Sides.SERVER && pattern.side === Sides.SERVER) {
             execute = true;
-        } else if (current_side === Sides.UNIVERSAL && pattern.side === Sides.BROWSER && browser) {
+        } else if (current_side === Sides.UNIVERSAL && pattern.side === Sides.CLIENT && browser) {
             execute = true;
         } else if (current_side === Sides.UNIVERSAL && pattern.side === Sides.UNIVERSAL) {
             execute = true;
