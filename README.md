@@ -72,8 +72,15 @@ export const patterns: Pattern[] = [
 - Create `.svelte` pages for 'error', 'base layout' and 'home', call them as you want
 - And specify paths to them in `error`, `layout` and first route in `patterns`.
 
-II. Diving deep into `Pattern`
-=============================
+II. Diving deep into `Layout` and `Pattern`
+===========================================
+
+There are 4 params, that are common for both 'layout' and 'pattern' declaration:
+- `page`
+- `js`
+- `side`
+- `options`
+Let's talk about it.
 
 So now we have only:
 ```ts
@@ -124,14 +131,10 @@ Enum is recommended.
 
 https://svelte.dev/docs/kit/page-options
 
----
-
-> `page`, `js`, `side` and `options` are common for both 'page' and 'layout' declaration.
-
 III. Matching slugs
 ===================
 
-1. Sure we want match complex urls and access slugs as params, like:
+1. Sure we want match complex urls and access slugs as params, for pages like:
 ```ts
 {re: 'articles/(<id>[0-9]+)', page: () => import('/src/articles/article.svelte'), layouts},
 ```
@@ -163,58 +166,3 @@ Advanced usage
 ==============
 
 TODO
-
-
-[comment]: <> (# `load` function in `<script module>`)
-
-[comment]: <> (Yes, one can define `load` function just in `.svelte` page in `<script module>` like in good old Sapper.)
-
-[comment]: <> (```html)
-
-[comment]: <> (<script module>)
-
-[comment]: <> (    import {get} from 'svelte/store';)
-
-[comment]: <> (    import {routeStore, titleStore, h1Store} from '/router/';)
-
-[comment]: <> (    export async function load&#40;{ url, params, data, fetch, setHeaders, depends, parent, untrack}&#41; {)
-
-[comment]: <> (        const article_id = get&#40;routeStore&#41;.slugs.id;)
-
-[comment]: <> (        const response = await fetch&#40;`/api/articles/${article_id}/`&#41;;)
-
-[comment]: <> (        const article = await response.json&#40;&#41;;)
-
-[comment]: <> (        return {article})
-
-[comment]: <> (    })
-
-[comment]: <> (</script>)
-
-[comment]: <> (<script>)
-
-[comment]: <> (    const { data } = $props&#40;&#41;;)
-    
-[comment]: <> (    let articles = $derived.by&#40;&#40;&#41; => {)
-
-[comment]: <> (        let articles = $state&#40;data.articles&#41;;)
-
-[comment]: <> (        return articles;)
-
-[comment]: <> (    }&#41; )
-
-[comment]: <> (</script>)
-
-[comment]: <> ({#each article in articles})
-
-[comment]: <> (    <div>)
-
-[comment]: <> (        <h1>{article.title}</h1>)
-
-[comment]: <> (        <div>{article.text}</div>)
-
-[comment]: <> (    </div>)
-
-[comment]: <> ({/each})
-
-[comment]: <> (```)
