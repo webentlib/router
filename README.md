@@ -68,8 +68,7 @@ Router expects only `patterns` to be exported.
 
 ### 6. `error`, `layout` and first route in `pattern`
 
-- Create `.svelte` pages for 'error', 'base layout' and 'home'
-- Call them as you want
+- Create `.svelte` pages for 'error', 'base layout' and 'home', call them as you want
 - And specify paths to them in `error`, `layout` and first route in `patterns`.
 
 # Diving deep into `Pattern`.
