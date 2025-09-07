@@ -249,20 +249,24 @@ export const patterns: Pattern[] = [
 ```html
 <script>
     // ROUTER
-    import { routeStore, titleStore, h1Store, Layouts, Wrappers, Extras, beforeNavigate } from '/all.ts';
+    import {routeStore, titleStore, h1Store, Layouts, Wrappers, Extras, beforeNavigate} from '/all.ts';
     let title   = $derived($titleStore || $routeStore.title);
     let h1      = $derived($h1Store || $routeStore.h1);
     let path    = $derived($routeStore.url.pathname + $routeStore.url.search);
     let layout  = $derived($routeStore.layout);
     let wrapper = $derived($routeStore.wrapper);
-    let extras    = $derived($routeStore.extras);
+    let name    = $derived($routeStore.name);
+    let extras  = $derived($routeStore.extras);
     beforeNavigate(() => {
         $titleStore = null;
         $h1Store = null;
     });
 
+    // CSRF
+    import '/lib/csrf.ts';
+    
     // CUSTOM
-    import { GoTop } from '/all.ts';
+    import { Nprogress, GoTop } from '/all.ts';
     import Header from '/src/Header.svelte';
 
     let { children } = $props();
@@ -271,7 +275,6 @@ export const patterns: Pattern[] = [
 <svelte:head>
     <title>{title ? title + ' | My Project' : 'My Project'}</title>
 </svelte:head>
-
 {#if layout !== Layouts.BLANK}
     <Header/>
 {/if}
@@ -279,10 +282,12 @@ export const patterns: Pattern[] = [
 {#key path}
     {#if layout === Layouts.DEFAULT}
         <main
-            class='Wrapper'
+            class={`Wrapper`}
             class:_Wide={wrapper === Wrappers.WIDE}
             class:_Default={wrapper === Wrappers.DEFAULT}
             class:_Narrow={wrapper === Wrappers.NARROW}
+            class:_Form={wrapper === Wrappers.FORM}
+            data-name={name}
         >
             {#if h1}
                 <div class="Heading">
@@ -296,7 +301,9 @@ export const patterns: Pattern[] = [
     {/if}
 {/key}
 
-{#if extras?.length || extras.includes(Extras.GO_TOP)}
+<Nprogress/>
+
+{#if extras?.length && extras.includes(Extras.GO_TOP)}
     <GoTop/>
 {/if}
 ```
