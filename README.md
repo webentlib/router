@@ -45,7 +45,7 @@ At the very top of `index.ts` add:
 
 ```ts
 // ROUTER
-export { routeStore, titleStore, h1Store, Sides } from '/router/';
+export { routeStore, Sides } from '/router/';
 export type { Pattern, Layout, Error } from '/router/';
 ```
 
@@ -149,15 +149,14 @@ So `load` function using `slugs` could look like that:
 export async function load({ url, params, data, fetch, setHeaders, depends, parent, untrack, slugs }) {
     const response = await fetch(`/api/articles/${slugs.id}/`);
     const article = await response.json();
-    return {article}
+    return { article }
 }
 ```
 Or using `routeStore`:
 ```ts
-import {get} from 'svelte/store';
 import { routeStore } from '/router/';
 export async function load({ url, params, data, fetch, setHeaders, depends, parent, untrack, slugs }) {
-    const response = await fetch(`/api/articles/${get(routeStore).slugs}/`);
+    const response = await fetch(`/api/articles/${slugs.id}/`);
     const article = await response.json();
     return {article}
 }
@@ -249,9 +248,9 @@ export const patterns: Pattern[] = [
 ```html
 <script>
     // ROUTER
-    import {routeStore, titleStore, h1Store, Layouts, Wrappers, Extras, beforeNavigate} from '/all.ts';
-    let title   = $derived($titleStore || $routeStore.title);
-    let h1      = $derived($h1Store || $routeStore.h1);
+    import { routeStore, Layouts, Wrappers, Extras, beforeNavigate } from '/all.ts';
+    let title   = $derived($routeStore.title);
+    let h1      = $derived($routeStore.h1);
     let path    = $derived($routeStore.url.pathname + $routeStore.url.search);
     let layout  = $derived($routeStore.layout);
     let wrapper = $derived($routeStore.wrapper);
@@ -273,8 +272,9 @@ export const patterns: Pattern[] = [
 </script>
 
 <svelte:head>
-    <title>{title ? title + ' | My Project' : 'My Project'}</title>
+    <title>{title || 'My Project'}</title>
 </svelte:head>
+
 {#if layout !== Layouts.BLANK}
     <Header/>
 {/if}
@@ -306,12 +306,4 @@ export const patterns: Pattern[] = [
 {#if extras?.length && extras.includes(Extras.GO_TOP)}
     <GoTop/>
 {/if}
-```
-
-`article.svelte`:
-
-```ts
-$effect(() => {
-    $titleStore = article.name    
-})
 ```

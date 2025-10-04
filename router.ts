@@ -7,8 +7,6 @@ import { Sides } from './enums.ts';
 import type { Route } from './types.ts';
 
 export const routeStore: Writable<Route> = writable();
-export const titleStore = writable();
-export const h1Store = writable();
 
 export const Router: any = {}
 

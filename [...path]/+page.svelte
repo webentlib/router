@@ -1,6 +1,6 @@
 <script>
     import {routeStore} from '../router.ts';
-    export let data;
+    const { data } = $props();
 </script>
 
 {#snippet draw(routeStore, index)}
