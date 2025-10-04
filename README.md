@@ -38,15 +38,15 @@ export default defineConfig({
 }
 ```
 
-### 4. `index.ts`
+### 4. `all.ts`
 
-Optionally, re-export Routers' vars via your root's `index.ts`.  
-At the very top of `index.ts` add:
+Optionally, re-export Routers' vars via your root's `all.ts`.  
+At the very top of `all.ts` add:
 
 ```ts
 // ROUTER
-export { routeStore, Sides } from '/router/';
-export type { Pattern, Layout, Error } from '/router/';
+export * from '/router/';
+export type * from '/router/';
 ```
 
 ### 5. `urls.ts`
@@ -54,7 +54,7 @@ export type { Pattern, Layout, Error } from '/router/';
 Create `urls.ts` in the root folder (same level as `package.json`)
 
 ```ts
-import type { Pattern, Layout, Error } from '/router/types';  // or from '/all.ts' in case you use root index.ts
+import type { Pattern, Layout, Error } from '/router/types';  // or from '/all.ts'
 
 export const error: Error = () => import('/src/error.svelte');
 const layout: Layout = { page: () => import('/src/base.svelte'), error };
