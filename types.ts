@@ -30,6 +30,6 @@ export interface Route extends PatternAndRoute {
     re: RegExp,          // RegExp from sting defined in Pattern
     url: URL,            // URL
     slugs: object,       // Slugs from Pattern — 'tasks/(<id>[0-9]+)' —> {id: 1}
-    patter: Pattern,     // Pattern
+    pattern: Pattern,     // Pattern
     layouts?: object[],  // Loaded .svelte layouts
 }
