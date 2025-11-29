@@ -1,15 +1,17 @@
 <script>
-    import {routeStore} from '../router.ts';
-    const { data } = $props();
+    import {routeStore} from '../../router.ts';
+    const {data} = $props();
 </script>
 
 {#snippet draw(routeStore, index)}
+    {@const Layout = routeStore.layouts[index]}
+    {@const Page = routeStore.page}
     {#if routeStore.layouts.length && index < routeStore.layouts.length}
-        <svelte:component this={routeStore.layouts[index]} {data}>
+        <Layout {data}>
             {@render draw(routeStore, index + 1)}
-        </svelte:component>
+        </Layout>
     {:else}
-        <svelte:component this={routeStore.page} {data}/>
+        <Page {data}/>
     {/if}
 {/snippet}
 

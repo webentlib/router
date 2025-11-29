@@ -2,9 +2,9 @@ import { writable, get } from 'svelte/store';
 import type { Writable } from 'svelte/store';
 import { error as svelteError } from '@sveltejs/kit';
 import { browser } from '$app/environment';
-import { patterns, error } from '/urls.ts';
+import { patterns } from '/urls.ts';
 import { Sides } from './enums.ts';
-import type { Route } from './types.ts';
+import type { Route, Error } from './types.ts';
 
 export const routeStore: Writable<Route> = writable();
 
@@ -26,9 +26,9 @@ Router.get_pattern = function(pathname) {
     }
 }
 
-Router.check_404 = function(pattern) {
+Router.check_404 = function(pattern, side) {
     if (!pattern) {
-        throw svelteError(404, 'Not found')
+        svelteError(404, 'Not Found');
     }
 }
 
@@ -41,7 +41,7 @@ Router.get_route = async function(pattern, params) {
 
     route.page = (await pattern.page()).default;
     route.error = await Router.get_error(pattern)
-    route.layouts = await Router.get_layouts(params, pattern)
+    route.layouts = await Router.get_layouts(pattern)
 
     route.js = pattern.js;
     route.side = pattern.side;
@@ -83,7 +83,7 @@ Router.call_loads = async function(params, current_pattern, route, current_side)
     return params.data;
 }
 
-Router.get_layouts = async function(params, pattern) {
+Router.get_layouts = async function(pattern) {
     const layouts = [];
     for (const layout of pattern.layouts || []) {
         layouts.push((await layout.page()).default);
@@ -105,15 +105,30 @@ Router.get_slugs = function(pattern, url) {
     return result;
 }
 
-Router.get_error = async function(pattern) {
-    let error_to_return;
-    if (!pattern) {
-        error_to_return = error
+Router.get_default_error = async function() {
+    let error;
+    let urls = await import('/urls.ts');
+    if (urls.error) {
+        error = (await urls.error()).default;
     }
+    return error;
+}
+
+Router.get_error = async function(pattern) {
+    let error;
     for (const page of [...(pattern?.layouts || []), pattern].reverse()) {
         if (!page?.error) continue;
-        error_to_return = page.error
+        error = page.error
         break
     }
-    return (await error_to_return()).default;
+
+    if (error) {
+        error = (await error()).default
+    } else {
+        let {error: default_error} = await import('/urls.ts');
+        if (default_error) {
+            error = (await default_error()).default
+        }
+    }
+    return error;
 }

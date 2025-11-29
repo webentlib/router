@@ -1,6 +1,9 @@
-import { Router, routeStore } from '../router.js';
-import { Sides } from '../enums.ts';
-import type { Pattern, Route } from '../types.ts';
+import { error as svelteError } from '@sveltejs/kit';
+import { get } from 'svelte/store';
+
+import { Router, routeStore } from '../../router.js';
+import { Sides } from '../../enums.ts';
+import type { Pattern, Route } from '../../types.ts';
 
 export let prerender = false;
 export let entries = () => [];
@@ -11,9 +14,8 @@ export let config = {};  // not sure
 
 
 export async function load(params) {
-
     const pattern: Pattern = Router.get_pattern(params.url.pathname);
-    Router.check_404(pattern);
+    Router.check_404(pattern, Sides.UNIVERSAL);
     const route: Route = await Router.get_route(pattern, params);
     routeStore.update((v) => ({...v, ...route}));
 
@@ -21,7 +23,7 @@ export async function load(params) {
         eval(`${k} = ${v}`);
     }
 
-    params.data = await Router.call_loads(params, pattern, route, Sides.SERVER);
+    params.data = await Router.call_loads(params, pattern, route, Sides.UNIVERSAL);
 
     return params.data;
 }

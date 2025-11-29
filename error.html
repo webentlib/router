@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>%sveltekit.error.message%</title>
+	</head>
+	<body>
+        <div class="Error">
+            <h1 class="ErrorStatus">%sveltekit.status%</h1>
+            <div class="ErrorMessage">%sveltekit.error.message%</div>
+        </div>
+        <style>
+            /*body:has( > .Error) {background:#fff;overflow-y:scroll;}*/
+            .Error {position:fixed;left:0;top:0;right:0;bottom:0;padding-top:48px;text-align:center;}
+                .ErrorStatus {font-size:48px;margin:0 0 24px;}
+                .ErrorMessage {font-size:24px;}
+        </style>
+	</body>
+</html>
