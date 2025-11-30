@@ -19,9 +19,7 @@
 
 <svelte:head><title>{page.error.message}</title></svelte:head>
 
-{#await get_error()}
-
-{:then Error}
+{#await get_error() then Error}
     {#if Error}
         <Error/>
     {:else}
