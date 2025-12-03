@@ -290,8 +290,8 @@ export const patterns: Pattern[] = [
             data-name={name}
         >
             {#if h1}
-                <div class="Heading">
-                    <h1 class="Title">{h1}</h1>
+                <div class="HEADING">
+                    <h1 class="TITLE">{h1}</h1>
                 </div>
             {/if}
             {@render children?.()}
@@ -307,25 +307,3 @@ export const patterns: Pattern[] = [
     <GoTop/>
 {/if}
 ```
-
-# Ошибки
-
-В случае любой ошибки в `hooks.server.js` или в `fetch` ('TypeError: fetch failed') —
-error.html (шрифтом с засечками)
-
-Примеры:
-1. В load-функции `fetch` выбросил 'TypeError: fetch failed' -> '500 | Internal Error'
-2. Непредвиденная ошибка `hooks.server.js` -> '500 | Internal Error'
-3. Ожидаемая ошибка `hooks.server.js` используя `throw 'Something'` -> '500 | Internal Error'
-4. Ожидаемая ошибка `hooks.server.js` используя `error(503, 'Service Unavailable')` -> '503 | Service Unavailable'
-
-Во всех остальных случаях (в т.ч. и над и внутри load-функции) —
-error.svelte (шрифтом без засечек)
-
-1. В load-функции вернулся текст (с любым http-статусом), а ожидалось `.json()` -> '500 | Internal Error'
-2. Непредвиденная ошибка -> '500 | Internal Error'
-3. Ожидаемая ошибка используя (в т.ч. над load-функ) `error(503, 'Service Unavailable')` -> '503 | Service Unavailable'
-4. Ожидаемая ошибка используя `throw 'Something'` -> '500 | Internal Error'
-5. Роутер не нашёл шаблон -> '404 | Not Found'
-
-P.S. Наличие `throw` в `throw error(503, 'Service Unavailable')` избыточно и ни на что не влияет.
