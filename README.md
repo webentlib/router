@@ -76,7 +76,7 @@ Each layout or page can export `load` function in `<script module>`, just like i
 </script>
 ```
 
-One can just explore `router/types.ts`, but here is full example of `urls.ts`:
+Full example of `urls.ts`:
 
 ```ts
 import { Sides } from '/router/enums.ts';
