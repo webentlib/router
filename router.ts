@@ -64,7 +64,7 @@ Router.call_loads = async function(params, current_pattern, route, current_side)
         }
         if (current_side === Sides.SERVER && pattern.side === Sides.SERVER) {
             execute = true;
-        } else if (current_side === Sides.UNIVERSAL && pattern.side === Sides.CLIENT && browser) {
+        } else if (current_side === Sides.UNIVERSAL && pattern.side === Sides.BROWSER && browser) {
             execute = true;
         } else if (current_side === Sides.UNIVERSAL && pattern.side === Sides.UNIVERSAL) {
             execute = true;

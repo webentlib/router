@@ -1,5 +1,5 @@
 export enum Sides {
     SERVER = 'SERVER',
-    CLIENT = 'CLIENT',
+    BROWSER = 'BROWSER',
     UNIVERSAL = 'UNIVERSAL',
 }
