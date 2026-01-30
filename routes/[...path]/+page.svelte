@@ -1,6 +1,19 @@
 <script>
+    import { onMount } from 'svelte';
     import {routeStore} from '../../router.ts';
+    import { page } from '$app/state';
     const {data} = $props();
+
+    onMount(() => {
+        const handlePopState = (event) => {
+            let url = $routeStore.url = new URLSearchParams(location.search);
+            url.searchParams = new URLSearchParams(location.search);
+            routeStore.update((v) => ({...v, ...{ url }}));
+        };
+
+        window.addEventListener('popstate', handlePopState);
+    });
+
 </script>
 
 {#snippet draw(routeStore, index)}
