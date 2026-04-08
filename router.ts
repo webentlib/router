@@ -6,7 +6,16 @@ import { patterns } from '/urls.ts';
 import { Sides } from './enums.ts';
 import type { Route, Error } from './types.ts';
 
-export const routeStore: Writable<Route> = writable();
+export const routeStore: Writable<Partial<Route>> = writable({
+    getSearch(params) {
+        const cleanedParams: any = Object.fromEntries(Object.entries(params).filter(([_, v]) => ![null, undefined, ''].includes(v)));
+        if (!Object.keys(cleanedParams)?.length) {
+            return ''
+        }
+        const search = new URLSearchParams(cleanedParams).toString();
+        return search;
+    }
+});
 
 export const Router: any = {}
 

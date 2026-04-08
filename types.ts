@@ -32,4 +32,5 @@ export interface Route extends PatternAndRoute {
     slugs: object,       // Slugs from Pattern — 'tasks/(<id>[0-9]+)' —> {id: 1}
     pattern: Pattern,     // Pattern
     layouts?: object[],  // Loaded .svelte layouts
+    getSearch: (params: any) => string;
 }

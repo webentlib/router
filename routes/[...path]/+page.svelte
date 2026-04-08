@@ -1,19 +1,13 @@
 <script>
-    import { onMount } from 'svelte';
-    import {routeStore} from '../../router.ts';
-    import { page } from '$app/state';
-    const {data} = $props();
+    import { onMount } from '/sv';
+    import { routeStore } from '../../router.ts';
+    import { page as pageStore } from '$app/stores';
 
-    onMount(() => {
-        const handlePopState = (event) => {
-            let url = $routeStore.url = new URLSearchParams(location.search);
-            url.searchParams = new URLSearchParams(location.search);
-            routeStore.update((v) => ({...v, ...{ url }}));
-        };
+    const { data } = $props();
 
-        window.addEventListener('popstate', handlePopState);
-    });
-
+    $effect(() => {
+        $routeStore.url = $pageStore.url;
+    })
 </script>
 
 {#snippet draw(routeStore, index)}
