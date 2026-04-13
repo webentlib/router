@@ -1,5 +1,4 @@
 <script>
-    import { onMount } from '/sv';
     import { routeStore } from '../../router.ts';
     import { page as pageStore } from '$app/stores';
 
