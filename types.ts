@@ -29,7 +29,7 @@ export interface Pattern extends PatternAndRoute {
 export interface Route extends PatternAndRoute {
     re: RegExp,          // RegExp from sting defined in Pattern
     url: URL,            // URL
-    slugs: object,       // Slugs from Pattern — 'tasks/(<id>[0-9]+)' —> {id: 1}
+    slugs: any,          // Slugs from Pattern — 'tasks/(<id>[0-9]+)' —> {id: 1}
     pattern: Pattern,     // Pattern
     layouts?: object[],  // Loaded .svelte layouts
     getSearch: (params: any) => string;

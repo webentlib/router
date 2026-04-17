@@ -1,12 +1,18 @@
 <script>
+    import { untrack } from 'svelte';
     import { routeStore } from '../../router.ts';
     import { page as pageStore } from '$app/stores';
 
     const { data } = $props();
 
     $effect(() => {
-        $routeStore.url = $pageStore.url;
-    })
+        const pageStoreUrl = $pageStore.url;
+        untrack(() => {
+            if ($routeStore.url.href != pageStoreUrl.href) {
+                $routeStore.url = pageStoreUrl;
+            }
+        });
+    });
 </script>
 
 {#snippet draw(routeStore, index)}
